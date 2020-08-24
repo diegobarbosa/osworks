@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.system.osworks.domain.exception.DomainException;
+import com.system.osworks.domain.exception.NotFoundException;
 
 @ControllerAdvice//Componente do Spring
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -69,6 +70,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		return super.handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
 	}
+	
+	//Informa que esse método deve tratar as exceções do tipo DomainException
+		@ExceptionHandler(NotFoundException.class)
+		public ResponseEntity<Object> handleNotFound(DomainException ex, WebRequest request) {
+			var status = HttpStatus.NOT_FOUND;
+			
+			var problema = new Problema();
+			problema.setStatus(status.value());
+			problema.setTitulo(ex.getMessage());
+			problema.setDataHora(LocalDateTime.now());
+			
+			
+			return super.handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
+		}
 	
 
 	

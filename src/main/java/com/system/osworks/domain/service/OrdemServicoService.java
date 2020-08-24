@@ -7,10 +7,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.system.osworks.domain.exception.DomainException;
+import com.system.osworks.domain.exception.NotFoundException;
 import com.system.osworks.domain.model.Cliente;
+import com.system.osworks.domain.model.Comentario;
 import com.system.osworks.domain.model.OrdemServico;
 import com.system.osworks.domain.model.StatusOrdemServico;
 import com.system.osworks.domain.repository.ClienteRepository;
+import com.system.osworks.domain.repository.ComentarioRepository;
 import com.system.osworks.domain.repository.OrdemServicoRepository;
 
 @Service//Componente do Spring
@@ -20,7 +23,10 @@ public class OrdemServicoService {
 	private OrdemServicoRepository repo;
 	
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private ComentarioRepository comentarioRepository;
 	
 	public OrdemServico criar(OrdemServico ordemServico) {
 		
@@ -33,4 +39,33 @@ public class OrdemServicoService {
 		
 		return repo.save(ordemServico);
 	}
+	
+	public Comentario adicionarComentario(Long ordemServicoId, String descricao) {
+		
+		OrdemServico ordemServico = repo.findById(ordemServicoId)
+				.orElseThrow(()-> new NotFoundException("Ordem de serviço não encontrada"));
+		
+		
+		Comentario comentario = new Comentario();
+		comentario.setDataEnvio(LocalDateTime.now());
+		comentario.setDescricao(descricao);
+		comentario.setOrdemServico(ordemServico);
+		
+		comentarioRepository.save(comentario);
+		
+		return comentario;
+	}
+	
+	public void finalizar(Long ordemServicoId) {
+		
+		OrdemServico ordemServico = repo.findById(ordemServicoId)
+				.orElseThrow(()-> new NotFoundException("Ordem de serviço não encontrada"));
+		
+		
+		ordemServico.finalizar();
+		
+		repo.save(ordemServico);
+	}
+	
+	
 }

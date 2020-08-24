@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.system.osworks.domain.exception.DomainException;
 
 @Entity
 public class OrdemServico {
@@ -48,6 +49,7 @@ public class OrdemServico {
 	@JsonProperty(access=Access.READ_ONLY)
 	private LocalDateTime dataFinalizacao;
 	
+	//Uma Ordem de Serviço pode ter vários comentários
 	@OneToMany(mappedBy="ordemServico")//propriedade do outro lado que é a ligação entre os dois
 	private List<Comentario> comentarios = new ArrayList<>();
 	
@@ -126,5 +128,22 @@ public class OrdemServico {
 		} else if (!cliente.equals(other.cliente))
 			return false;
 		return true;
+	}
+	
+	public boolean podeSerFinalizada() {
+		return getStatus().equals(StatusOrdemServico.ABERTA);
+	}
+	
+	public void finalizar() {
+		
+		if(!podeSerFinalizada()) {
+			throw new DomainException("A ordem de serviço só pode ser finalizada se estiver ABERTA.");
+		}
+				
+		setStatus(StatusOrdemServico.FINALIZADA);
+		setDataFinalizacao(LocalDateTime.now());
+		
+
+		
 	}
 }
