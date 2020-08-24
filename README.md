@@ -5,12 +5,13 @@ Web Api de Ordem de serviços.
 ## Tools
 
 - Spring Boot 
-- Spring Tools
-- Ecplise Spring 
+- Spring Dev Tools
+- Ecplise Spring Tools Suite
 - JDK 14
 - Maven
 - MySql
 - Flyway 
 - JPA
-- Java Bean Validation
+- Jakarta Bean Validation
 - ModelMapper
+- Postman
